@@ -42,11 +42,11 @@ module LaterDude
         content_tag(:thead, "#{show_month_names}#{show_day_names}".html_safe) + content_tag(:tbody, show_days)
       end
     end
-    
+
     def first_rendered_date
       beginning_of_week(@days.first)
     end
-    
+
     def last_rendered_date
       beginning_of_week(@days.last + 1.week) - 1
     end
@@ -80,7 +80,7 @@ module LaterDude
 
     def show_day(day)
       options = { :class => "day" }
-      options[:class] << " otherMonth" if day.month != @days.first.month
+      options[:class] << " other-month" if day.month != @days.first.month
       options[:class] << " weekend" if Calendar.weekend?(day)
       options[:class] << " today" if day.today?
 
@@ -114,7 +114,7 @@ module LaterDude
     def show_month_names
       return if @options[:hide_month_name]
 
-      content_tag(:tr, "#{previous_month}#{current_month}#{next_month}".html_safe, :class => 'month_names')
+      content_tag(:tr, "#{previous_month}#{current_month}#{next_month}".html_safe, :class => 'month-names')
     end
 
     # @options[:previous_month] can either be a single value or an array containing two values. For a single value, the
@@ -168,7 +168,7 @@ module LaterDude
 
     def show_day_names
       return if @options[:hide_day_names]
-      content_tag(:tr, :class => 'day_names') do
+      content_tag(:tr, :class => 'day-names') do
         apply_first_day_of_week(day_names).inject('') do |output, day|
           output << content_tag(:th, include_day_abbreviation(day), :scope => 'col', :class => Date::DAYNAMES[day_names.index(day)].downcase)
         end.html_safe
