@@ -78,15 +78,15 @@ module LaterDude
       end.html_safe
     end
 
-    def show_day(day)
+    def show_day(date)
       options = { :class => "day" }
-      options[:class] << " other-month" if day.month != @days.first.month
-      options[:class] << " weekend" if Calendar.weekend?(day)
-      options[:class] << " today" if day.today?
+      options[:class] << " other-month" if date.month != @days.first.month
+      options[:class] << " weekend" if Calendar.weekend?(date)
+      options[:class] << " today" if date.today?
 
       # block is only called for current month or if :yield_surrounding_days is set to true
-      if @block && (@options[:yield_surrounding_days] || day.month == @days.first.month)
-        content, options_from_block = Array(@block.call(day))
+      if @block && (@options[:yield_surrounding_days] || date.month == @days.first.month)
+        content, options_from_block = Array(@block.call(date))
 
         # passing options is optional
         if options_from_block.is_a?(Hash)
@@ -94,14 +94,15 @@ module LaterDude
           options.merge!(options_from_block)
         end
       else
-        content = day.day
+        content = date.day
       end
 
+      content = content.to_s + @options[:new_event_markup].call(date).to_s if @options[:new_event_markup] && @options[:new_event_markup].is_a?(Proc)
       content = content_tag(:td, content.to_s.html_safe, options)
 
       # close table row at the end of a week and start a new one
       # opening and closing tag for the first and last week are included in #show_days
-      content << "</tr><tr>".html_safe if day < @days.last && day.wday == last_day_of_week
+      content << "</tr><tr>".html_safe if date < @days.last && date.wday == last_day_of_week
       content
     end
 
@@ -212,7 +213,8 @@ module LaterDude
           :next_month => false,
           :previous_month => false,
           :next_and_previous_month => false,
-          :yield_surrounding_days => false
+          :yield_surrounding_days => false,
+          :new_event_markup => false
         }
       end
     end
